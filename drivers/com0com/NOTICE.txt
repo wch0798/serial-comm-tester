@@ -1,0 +1,12 @@
+com0com (Null-modem emulator) - 함께 배포하는 무료 가상 시리얼 포트 드라이버
+
+- 버전: 2.2.2.0, 64비트(x64) 서명판
+- 원본: https://sourceforge.net/projects/com0com/files/com0com/2.2.2.0/com0com-2.2.2.0-x64-fre-signed.zip
+- 원본 zip SHA-256: 3bc7313e8577774ce78cff4d1c816faf96cfa48c485bbcc5527d4569f7d5e373
+- setup.exe SHA-256: 64cf92e5b56f94c1ca14bbbbdcf0cb38b866241c6400e67b5e41c58daec39c12
+- 라이선스: GNU GPL (자세한 내용은 ReadMe.txt)
+- 소스 코드: https://sourceforge.net/projects/com0com/
+- 드라이버 서명: Steven William Hatchett (2011년, 옛날 방식 서명)
+
+이 폴더의 setup.exe 는 프로그램이 처음 가상 포트를 만들 때 자동으로 실행됩니다.
+(조용히 설치: setup.exe /S /D=C:\Program Files\com0com)

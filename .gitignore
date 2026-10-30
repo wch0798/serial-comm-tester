@@ -1,0 +1,19 @@
+# 가상 환경 / 빌드 결과
+.venv/
+.venv-win/
+.venv-build/
+build/
+dist/
+*.spec
+__pycache__/
+*.pyc
+
+# 개인 설정과 실행 중 생기는 파일
+vserial_config.json
+*.tmp
+logs/
+reports/
+
+# OS
+.DS_Store
+Thumbs.db
