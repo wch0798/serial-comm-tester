@@ -400,7 +400,16 @@ def make_parser():
 def main(argv=None):
     for stream in (sys.stdout, sys.stderr):
         try:
+            "한글".encode(stream.encoding or "ascii")
             stream.reconfigure(errors="replace")
+        except LookupError:
+            pass
+        except UnicodeEncodeError:
+            # 한글을 못 쓰는 출력(영문 Windows 파일 저장 등)이면 UTF-8로 바꾼다
+            try:
+                stream.reconfigure(encoding="utf-8", errors="replace")
+            except (AttributeError, ValueError):
+                pass
         except (AttributeError, ValueError):
             pass
     args = make_parser().parse_args(argv)
