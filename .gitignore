@@ -17,3 +17,4 @@ reports/
 # OS
 .DS_Store
 Thumbs.db
+release/

@@ -51,16 +51,42 @@ Windows / Linux / macOS에서 쓰는 통신 테스트 프로그램입니다.
 | `vport_win.py` | Windows 가상 COM 포트 관리 (com0com 자동 설치, 포트 추가/삭제, 상태 진단) |
 | `drivers/com0com/` | 함께 배포하는 무료 가상 포트 드라이버 (com0com 2.2.2.0 x64 서명판, GPL) |
 | `run_windows.bat` | Windows 실행 (처음 한 번 자동 준비) |
-| `build_windows.bat` | Windows용 실행 파일(.exe) 만들기 |
+| `build.py` | 실행 파일 만들기 (Windows / Mac / Linux 공통) |
+| `build_windows.bat` | Windows용 실행 파일(.exe) 만들기 (build.py 실행) |
+| `samples/smoke_test.json` | 자동 실행 예제 (TCP / Modbus / CAN 시험) |
+| `.github/workflows/build.yml` | GitHub 자동 빌드 설정 |
 | `vserial_config.json` | 설정 파일 (자동 저장) |
 | `logs/` | 로그 파일 ("파일로 기록"을 켰을 때) |
 | `reports/` | 시험 보고서 (엑셀) |
 
+## 실행 파일 받기 (Python 설치 불필요)
+
+GitHub의 **Actions → 실행 파일 빌드** 또는 **Releases**에서 OS에 맞는 파일을 받아 압축을 풉니다.
+
+| 파일 | OS |
+|---|---|
+| `SerialTester-windows-x64.zip` | Windows 10/11 (64비트) |
+| `SerialTester-macos-arm64.zip` | Mac (Apple 칩: M1/M2/M3/M4) |
+| `SerialTester-macos-x64.zip` | Mac (Intel 칩) |
+| `SerialTester-linux-x64.tar.gz` | Linux (Ubuntu 22.04 이상 등, 64비트) |
+
+압축 안에는 화면 프로그램(`SerialTester`), 자동 실행 프로그램(`SerialTesterCLI`), `실행방법.txt`가 들어 있습니다.
+서명하지 않은 무료 프로그램이라 처음 실행할 때 경고가 뜰 수 있습니다. 넘어가는 방법은 `실행방법.txt`에 있습니다.
+
+### 직접 실행 파일 만들기
+```
+pip install -r requirements.txt pyinstaller
+python build.py
+```
+지금 쓰는 OS용 실행 파일이 `release/` 폴더에 만들어집니다. (Windows는 `build_windows.bat` 더블클릭)
+`main` 브랜치에 올리면 GitHub가 4가지 OS용을 자동으로 만들고, 만든 실행 파일로 자동 시험(`samples/smoke_test.json`)까지 돌립니다.
+`v1.0.0` 같은 태그를 올리면 Releases에 실행 파일이 올라갑니다.
+
 ## Windows에서 실행하기
 
 ### 방법 1: 실행 파일(.exe)로 나눠 주기 (사용자 PC에 Python 불필요)
-1. Python이 설치된 PC 한 대에서 `build_windows.bat`를 더블클릭합니다.
-2. `dist\SerialTester` 폴더가 만들어집니다. 이 **폴더를 통째로** 다른 PC에 복사합니다.
+1. Python이 설치된 PC 한 대에서 `build_windows.bat`를 더블클릭합니다. (또는 위의 "실행 파일 받기")
+2. `release\SerialTester-windows-x64.zip`이 만들어집니다. 다른 PC에서 **압축을 통째로** 풉니다.
 3. 다른 PC에서는 `SerialTester.exe`를 실행하면 됩니다.
 4. 같은 폴더의 `SerialTesterCLI.exe`는 화면 없는 자동 실행용입니다 (아래 "자동 실행" 참고).
 

@@ -1,0 +1,25 @@
+{
+  "version": 2,
+  "tabs": [
+    {"name": "장비", "enabled": true, "conn": "tcp_server", "protocol": "raw", "host": "127.0.0.1", "tcp_port": "15901",
+     "auto_enabled": true,
+     "rules": [{"enabled": true, "match": "PING", "match_fmt": "TEXT", "response": "PONG", "response_fmt": "TEXT"}]},
+    {"name": "시험기", "enabled": true, "conn": "tcp_client", "protocol": "raw", "host": "127.0.0.1", "tcp_port": "15901",
+     "scenario": {"repeat": "3", "stop_on_fail": true, "steps": [
+       {"kind": "send", "data": "PING", "fmt": "TEXT", "check": "none", "ms": 0, "enabled": true},
+       {"kind": "expect", "data": "PONG", "fmt": "TEXT", "check": "none", "ms": 2000, "enabled": true}]}},
+    {"name": "Modbus 장치", "enabled": true, "conn": "tcp_server", "protocol": "mb_slave", "frame": "TCP",
+     "host": "127.0.0.1", "tcp_port": "15902", "slave": {"unit_id": "1", "data": {"hr": {"0": 1234}}}},
+    {"name": "Modbus 시험", "enabled": true, "conn": "tcp_client", "protocol": "raw", "host": "127.0.0.1", "tcp_port": "15902",
+     "scenario": {"repeat": "2", "steps": [
+       {"kind": "send", "data": "00 01 00 00 00 06 01 03 00 00 00 01", "fmt": "HEX", "check": "none", "ms": 0, "enabled": true},
+       {"kind": "expect", "data": "01 03 02 04 D2", "fmt": "HEX", "check": "none", "ms": 2000, "enabled": true}]}},
+    {"name": "CAN ECU", "enabled": true, "conn": "can", "protocol": "raw", "can_iface": "virtual", "can_channel": "smoke",
+     "auto_enabled": true,
+     "rules": [{"enabled": true, "match": "7DF#02 01 0C", "match_fmt": "CAN", "response": "7E8#04 41 0C 1A F8", "response_fmt": "CAN"}]},
+    {"name": "CAN 시험", "enabled": true, "conn": "can", "protocol": "raw", "can_iface": "virtual", "can_channel": "smoke",
+     "scenario": {"repeat": "2", "steps": [
+       {"kind": "send", "data": "7DF#02 01 0C", "fmt": "CAN", "check": "none", "ms": 0, "enabled": true},
+       {"kind": "expect", "data": "7E8#04 41 0C", "fmt": "CAN", "check": "none", "ms": 2000, "enabled": true}]}}
+  ]
+}

@@ -28,13 +28,23 @@ APP_TITLE = "통신 테스트 도구 (시리얼 / TCP / Modbus)"
 AUTOSAVE_MS = 3000
 
 
+def program_dir():
+    """프로그램이 있는 폴더 (Mac 앱이면 .app 묶음이 들어 있는 폴더)"""
+    if not getattr(sys, "frozen", False):
+        return os.path.dirname(os.path.abspath(__file__))
+    base = os.path.dirname(os.path.abspath(sys.executable))
+    marker = ".app" + os.sep + "Contents" + os.sep + "MacOS"
+    if base.endswith(marker):
+        base = os.path.dirname(os.path.dirname(os.path.dirname(base)))
+    return base
+
+
 def default_config_path():
-    """설정 파일 위치: 프로그램 폴더 (쓰기 불가면 사용자 폴더)"""
-    if getattr(sys, "frozen", False):
-        base = os.path.dirname(sys.executable)
-    else:
-        base = os.path.dirname(os.path.abspath(__file__))
-    if not os.access(base, os.W_OK):
+    """설정 파일 위치: 프로그램 폴더 (쓰기 불가면 사용자 폴더)
+    Mac 앱(.app)은 앱 묶음 안에 쓰면 안 되므로 항상 사용자 폴더(~/.vserial)를 쓴다."""
+    base = program_dir()
+    mac_app = getattr(sys, "frozen", False) and sys.platform == "darwin"
+    if mac_app or not os.access(base, os.W_OK):
         base = os.path.join(os.path.expanduser("~"), ".vserial")
         os.makedirs(base, exist_ok=True)
     return os.path.join(base, "vserial_config.json")
@@ -1548,7 +1558,7 @@ class App(object):
     def show_autotest_help(self):
         """화면 없이 시나리오를 돌리는 명령을 보여 준다 (지금 설정을 먼저 저장)."""
         self.save_config(CONFIG_PATH)
-        folder = os.path.dirname(os.path.abspath(sys.executable if getattr(sys, "frozen", False) else __file__))
+        folder = program_dir()
         if getattr(sys, "frozen", False):
             exe = os.path.join(folder, "SerialTesterCLI.exe" if core.IS_WINDOWS else "SerialTesterCLI")
             cmd = '"%s" "%s"' % (exe, CONFIG_PATH)

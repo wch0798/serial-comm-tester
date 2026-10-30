@@ -1,0 +1,62 @@
+# 실행 파일 자동 빌드: main 에 올리면 Windows / macOS(Apple 칩, Intel) / Linux 실행 파일을 만든다.
+# v로 시작하는 태그(예: v1.0.0)를 올리면 GitHub Releases 에 실행 파일을 올린다.
+name: 실행 파일 빌드
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  PYTHONUTF8: "1"
+  PYTHONIOENCODING: utf-8
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest, macos-15-intel, ubuntu-22.04]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 구성 요소 설치
+        run: python -m pip install -r requirements.txt pyinstaller
+
+      - name: 실행 파일 만들기
+        run: python build.py
+
+      - name: 만든 실행 파일로 자동 시험 (TCP / Modbus / CAN)
+        shell: bash
+        run: |
+          CLI=dist/package/SerialTester/SerialTesterCLI
+          if [ -f "$CLI.exe" ]; then CLI="$CLI.exe"; fi
+          "$CLI" samples/smoke_test.json --wait 1 --quiet --report smoke_report.xlsx
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SerialTester-${{ matrix.os }}
+          path: release/*
+          if-no-files-found: error
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: out
+          merge-multiple: true
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: out/*

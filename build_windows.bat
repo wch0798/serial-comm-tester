@@ -15,15 +15,11 @@ if not defined PY (
 if not exist ".venv-build\Scripts\python.exe" %PY% -m venv .venv-build
 ".venv-build\Scripts\python.exe" -m pip install --disable-pip-version-check -r requirements.txt pyinstaller
 if errorlevel 1 goto fail
-".venv-build\Scripts\pyinstaller.exe" --noconfirm --clean --windowed --name SerialTester --add-data "drivers;drivers" --collect-submodules can main.py
+".venv-build\Scripts\python.exe" build.py
 if errorlevel 1 goto fail
-rem 화면 없는 자동 실행용 (명령 창에서 실행, 결과 코드 0/1/2)
-".venv-build\Scripts\pyinstaller.exe" --noconfirm --onefile --console --name SerialTesterCLI --add-data "drivers;drivers" --collect-submodules can autotest.py
-if errorlevel 1 goto fail
-copy /y "dist\SerialTesterCLI.exe" "dist\SerialTester\" >nul
 echo.
-echo 완료: dist\SerialTester 폴더를 통째로 다른 PC에 복사해서 SerialTester.exe 를 실행하면 됩니다.
-echo       자동 실행(화면 없이 시험)은 같은 폴더의 SerialTesterCLI.exe 를 쓰세요.
+echo 완료: release 폴더의 SerialTester-windows-x64.zip 을 다른 PC에 풀어서 SerialTester.exe 를 실행하면 됩니다.
+echo       (dist\package\SerialTester 폴더가 압축 전 내용입니다. 자동 실행은 SerialTesterCLI.exe)
 echo (그 PC에는 Python이 없어도 됩니다.)
 pause
 exit /b 0
